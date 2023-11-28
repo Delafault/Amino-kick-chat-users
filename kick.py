@@ -1,5 +1,5 @@
-from time import sleep
 from aminofix import Client, SubClient, exceptions
+from time import sleep
 import threading
 import os
 
