@@ -1,7 +1,6 @@
 from time import sleep
-from aminofix import *
+from aminofix import Client, SubClient, exceptions
 import threading
-import aminofix
 import os
 
 os.system('cls' if os.name == 'nt' else 'clear')
@@ -36,10 +35,12 @@ def kick_user(sub_clientz, chatId, userId):
 def main():
     while True:
         try:
-            clientz = aminofix.Client()
+            clientz = Client()
             clientz.login(email = input("E-mail: "), password = input("пароль: "))
             gd_print(f"Вошли в аккаунт '{clientz.profile.nickname}'")
             break
+        except exceptions.VerificationRequired as e:
+            bd_print(f"Ошибка: требуется верификация аккаунта. Пройдите капчу и попробуйте войти снова: {e})")
         except Exception as error:
             bd_print(f"Ошибка: {error}")
 
@@ -48,9 +49,11 @@ def main():
             chat_link = clientz.get_from_code(input("Ссылка на чат: "))
             comId = chat_link.comId
             chatId = chat_link.objectId
-            sub_clientz = aminofix.SubClient(comId = comId, profile = clientz.profile)
+            sub_clientz = SubClient(comId = comId, profile = clientz.profile)
             gd_print(f"Получили информацию о чате '{sub_clientz.get_chat_thread(chatId).title}'")
             break
+        except exceptions.UnexistentData as e:
+            bd_print(f"Ошибка: чат не найден: {e}")
         except Exception as error:
             bd_print(f"Ошибка: {error}")
 
